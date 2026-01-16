@@ -6,16 +6,24 @@ import (
 )
 
 func nextPowerOfTwo(n int) int {
-	if n == 0 {
-		return 1
-	}
-
-	pow := 2
+	pow := 1
 	for n > pow {
 		pow *= 2
 	}
 
 	return pow
+}
+
+func MagnitudesToDB(magnitudes []float64) []float64 {
+	epsilon := 1e-9
+
+	dbValues := make([]float64, len(magnitudes))
+	for i, mag := range magnitudes {
+		mag = max(mag, epsilon)
+		dbValues[i] = 20 * math.Log10(mag)
+	}
+
+	return dbValues
 }
 
 func PadDataToPowerOfTwo(data []float64) []complex128 {

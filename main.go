@@ -139,18 +139,6 @@ func readWavToFloats(path string) (*AudioData, error) {
 	}, nil
 }
 
-func magnitudesToDB(magnitudes []float64) []float64 {
-	epsilon := 1e-9
-
-	dbValues := make([]float64, len(magnitudes))
-	for i, mag := range magnitudes {
-		mag = max(mag, epsilon)
-		dbValues[i] = 20 * math.Log10(mag)
-	}
-
-	return dbValues
-}
-
 func drawSpectrum(dbValues []float64, numBars int) {
 	chunkSize := len(dbValues) / numBars
 
