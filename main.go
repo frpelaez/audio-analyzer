@@ -222,7 +222,10 @@ func drawLogSpectrum(magnitudes []float64, sampleRate int, numBars int) {
 
 		barLen := int(normalzied * 40)
 		barBuilder := strings.Builder{}
-		for range barLen {
+		for i := range barLen {
+			if i == 0 {
+				barBuilder.WriteString("|█|")
+			}
 			barBuilder.WriteString("█|")
 		}
 
