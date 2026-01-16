@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"audioanalyzer/sig-proc"
+	sigproc "audioanalyzer/sig-proc"
 
 	"github.com/go-audio/wav"
 )
@@ -20,7 +20,12 @@ type AudioData struct {
 }
 
 func main() {
-	filePath := "./data/audio2.wav"
+	var filePath string
+	if len(os.Args) < 2 {
+		filePath = "./data/audio.wav"
+	} else {
+		filePath = os.Args[1]
+	}
 
 	data, err := readWavToFloats(filePath)
 	if err != nil {

@@ -15,14 +15,25 @@ func generateRandomData(n int) []complex128 {
 
 func BenchmarkFFT_4096(b *testing.B) {
 	input := generateRandomData(4096)
+	b.ResetTimer()
 
 	for b.Loop() {
 		FFT(input)
 	}
 }
 
+func BenchmarkFFTSequiential_4096(b *testing.B) {
+	input := generateRandomData(4096)
+	b.ResetTimer()
+
+	for b.Loop() {
+		fftSequential(input)
+	}
+}
+
 func BenchmarkFFT_1048576(b *testing.B) {
 	input := generateRandomData(1048576)
+	b.ResetTimer()
 
 	for b.Loop() {
 		FFT(input)
@@ -31,6 +42,7 @@ func BenchmarkFFT_1048576(b *testing.B) {
 
 func BenchmarkFFTSequential_1048576(b *testing.B) {
 	input := generateRandomData(1048576)
+	b.ResetTimer()
 
 	for b.Loop() {
 		fftSequential(input)
