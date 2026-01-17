@@ -49,11 +49,11 @@ func main() {
 }
 
 func printHelp() {
-	fmt.Println("Usage: insertar-nombre <command> [options]")
+	fmt.Println("Usage: audateci <command> [options]")
 	fmt.Println("\nAvailable commands:")
 	fmt.Println("  listen    Visualize the frequencies contained in the audio file")
 	fmt.Println("  analyze   Analyze the audio file and export data to CSV/Bin (wip)")
-	fmt.Println("\nType insertar-nombre <command> -h for specific help")
+	fmt.Println("\nType audateci <command> -h for specific help")
 }
 
 func runListenCmd(args []string) {
@@ -66,7 +66,7 @@ func runListenCmd(args []string) {
 
 	if cmd.NArg() < 1 {
 		fmt.Println("Error. Missing audio file")
-		fmt.Println("Usage: insertar-nombre listen [options] <audio_file.wav>")
+		fmt.Println("Usage: audateci listen [options] <audio_file.wav>")
 		cmd.PrintDefaults()
 		os.Exit(1)
 	}
@@ -156,7 +156,7 @@ func runAnalyzeCmd(args []string) {
 
 	if cmd.NArg() < 1 {
 		fmt.Println("Error. Missing audio file")
-		fmt.Println("Usage: insertar-nombre analyze [options] <audio_file.wav>")
+		fmt.Println("Usage: audateci analyze [options] <audio_file.wav>")
 		cmd.PrintDefaults()
 		os.Exit(1)
 	}
