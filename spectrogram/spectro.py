@@ -2,13 +2,12 @@ import argparse
 import sys
 
 import matplotlib.pyplot as plt
-from matplotlib.ticker import ScalarFormatter
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
-def plot_spectrogram(csv_file: str):
-    print(f"Loading data from: {csv_file} ...")
+def spectrogram(csv_file: str):
+    print(f"Loading data from: {csv_file}")
 
     try:
         df = pd.read_csv(csv_file)
@@ -41,13 +40,7 @@ def plot_spectrogram(csv_file: str):
 
     fig, ax = plt.subplots(figsize=(12, 6), dpi=100)
 
-    img = ax.pcolormesh(
-        times,
-        freqs,
-        data_log,
-        cmap="inferno",
-        shading="auto"
-    )
+    img = ax.pcolormesh(times, freqs, data_log, cmap="inferno", shading="auto")
 
     ax.set_yscale("log")
 
@@ -56,22 +49,24 @@ def plot_spectrogram(csv_file: str):
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Frequency (Hz)")
 
-    ax.yaxis.set_major_formatter(ScalarFormatter())
-    ax.yaxis.set_minor_formatter(ScalarFormatter())
-
-    tick_freqs = [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000]
-    ticks = [f for f in tick_freqs if freqs.min() <= f <= max_freq]
-    ax.set_yticks(ticks)
-
     ax.set_xlim(times.min(), times.max())
     ax.set_ylim(max(20, freqs.min()), max_freq)
 
     plt.tight_layout()
     plt.show()
 
-if __name__ == "__main__":
+
+def main():
     parser = argparse.ArgumentParser(description="Spectrogram visualizer from CSV")
-    parser.add_argument("file", type=str, help="Path to .csv file")
+    parser.add_argument(
+        "file",
+        type=str,
+        help="Path to .csv file containing the audio time vs. frequency data",
+    )
 
     args = parser.parse_args()
-    plot_spectrogram(args.file)
+    spectrogram(args.file)
+
+
+if __name__ == "__main__":
+    main()
