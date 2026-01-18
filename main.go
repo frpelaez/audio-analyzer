@@ -36,7 +36,7 @@ func main() {
 }
 
 func printHelp() {
-	fmt.Println("Usage: audateci <command> [options]")
+	fmt.Println("Usage: audateci <command> [options] <audio_file.wav>")
 	fmt.Println("\nAvailable commands:")
 	fmt.Println("  listen    Visualize the frequencies contained in the audio file")
 	fmt.Println("  analyze   Analyze the audio file and export data to CSV/Bin (wip)")
