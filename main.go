@@ -34,6 +34,7 @@ func printHelp() {
 	fmt.Println("\nAvailable commands:")
 	fmt.Println("  listen    Visualize the frequencies contained in the audio file")
 	fmt.Println("  analyze   Analyze the audio file and export data to CSV/Bin (wip)")
+	fmt.Println("  spectro   Compute spectrogram from audio file and export to png")
 	fmt.Println("\nType audateci <command> -h for specific help")
 }
 
