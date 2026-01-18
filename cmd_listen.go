@@ -25,6 +25,7 @@ func runListenCmd(args []string) {
 	if cmd.NArg() < 1 {
 		fmt.Println("Error. Missing audio file")
 		fmt.Println("Usage: audateci listen [options] <audio_file.wav>")
+		fmt.Println("Available options are:")
 		cmd.PrintDefaults()
 		os.Exit(1)
 	}
@@ -45,19 +46,19 @@ func runListenCmd(args []string) {
 
 	ctrl := &beep.Ctrl{Streamer: streamer, Paused: false}
 
-	data, err := readWavToFloats(inputFile)
+	data, err := sigproc.ReadWavToFloats(inputFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	windowSize := *winSize
 	// hopSize := windowSize / 2
-	sampleRate := data.sampleRate
-	samples := data.channels[0]
+	sampleRate := data.SampleRate
+	samples := data.Channels[0]
 
 	fmt.Printf("File '%s' read successfully\n", inputFile)
 	fmt.Printf("Sample frequency: %d Hz \n", sampleRate)
-	fmt.Printf("Channels: %d\n", len(data.channels))
+	fmt.Printf("Channels: %d\n", len(data.Channels))
 	fmt.Printf("Samples per channel: %d\n", len(samples))
 	fmt.Printf("Window size for FFT: %d\n", windowSize)
 

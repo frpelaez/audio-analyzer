@@ -2,7 +2,7 @@ package main
 
 import (
 	sigproc "audioanalyzer/sig-proc"
-	"encoding/csv"
+	// "encoding/csv"
 	"flag"
 	"fmt"
 	"log"
@@ -22,25 +22,25 @@ func runAnalyzeCmd(args []string) {
 	if cmd.NArg() < 1 {
 		fmt.Println("Error. Missing audio file")
 		fmt.Println("Usage: audateci analyze [options] <audio_file.wav>")
+		fmt.Println("Available options are:")
 		cmd.PrintDefaults()
 		os.Exit(1)
 	}
 	inputFile := cmd.Arg(0)
 
-	data, err := readWavToFloats(inputFile)
+	data, err := sigproc.ReadWavToFloats(inputFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	samples := data.channels[0]
-	hopSize := *winsize / 2
+	samples := data.Channels[0]
 
 	fmt.Printf("File '%s' read successfully\n", inputFile)
-	fmt.Printf("Sample frequency: %d Hz \n", data.sampleRate)
-	fmt.Printf("Channels: %d\n", len(data.channels))
+	fmt.Printf("Sample frequency: %d Hz \n", data.SampleRate)
+	fmt.Printf("Channels: %d\n", len(data.Channels))
 	fmt.Printf("Samples per channel: %d\n", len(samples))
 	fmt.Printf("Window size for FFT: %d\n", *winsize)
-	fmt.Printf("Outputing results to: %s.%s", *output, *format)
+	fmt.Printf("Outputing results to: %s.%s\n", *output, *format)
 
 	outFile, err := os.Create(fmt.Sprintf("%s.%s", *output, *format))
 	if err != nil {
@@ -48,41 +48,7 @@ func runAnalyzeCmd(args []string) {
 	}
 	defer outFile.Close()
 
-	var csvWriter *csv.Writer
-	if *format == "csv" {
-		csvWriter = csv.NewWriter(outFile)
-		defer csvWriter.Flush()
-
-		header := []string{"Time_Sec"}
-		numBins := *winsize / 2
-		for k := range numBins {
-			freq := float64(k) * float64(data.sampleRate) / float64(*winsize)
-			header = append(header, fmt.Sprintf("%.0fHz", freq))
-		}
-		csvWriter.Write(header)
-	}
-
 	start := time.Now()
-
-	for i := 0; i < len(samples)-*winsize; i += hopSize {
-		chunk := samples[i : i+hopSize]
-		windowed := sigproc.ApplyHanningWindow(chunk)
-		padded := sigproc.PadDataToPowerOfTwo(windowed)
-		fftResult := sigproc.FFT(padded)
-		magnitudes := sigproc.ComputeMagnitudes(fftResult)
-
-		if *format == "csv" {
-			row := make([]string, len(magnitudes)+1)
-			time := float64(i) / float64(data.sampleRate)
-			row[0] = fmt.Sprintf("%.3f", time)
-
-			for k, val := range magnitudes {
-				row[k+1] = fmt.Sprintf("%.2f", val)
-			}
-
-			csvWriter.Write(row)
-		}
-	}
-
-	fmt.Printf("Finished in %v.\n", time.Since(start))
+	sigproc.GenerateCSV(inputFile, outFile, *winsize)
+	fmt.Printf("Finished in %.3fs\n", time.Since(start).Seconds())
 }

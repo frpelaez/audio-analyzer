@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 
-def spectrogram(csv_file: str):
+def spectrogram(csv_file: str, output_file=None):
     print(f"Loading data from: {csv_file}")
 
     try:
@@ -53,7 +53,14 @@ def spectrogram(csv_file: str):
     ax.set_ylim(max(20, freqs.min()), max_freq)
 
     plt.tight_layout()
-    plt.show()
+
+    if output_file:
+        print(f"Saving image to: {output_file}")
+        plt.savefig(output_file, dpi=100, bbox_inches="tight")
+        print("Image saved successfully")
+    else:
+        print("Generating image...")
+        plt.show()
 
 
 def main():
@@ -63,9 +70,10 @@ def main():
         type=str,
         help="Path to .csv file containing the audio time vs. frequency data",
     )
+    parser.add_argument("--save", type=str, help="Target path")
 
     args = parser.parse_args()
-    spectrogram(args.file)
+    spectrogram(args.file, output_file=args.save)
 
 
 if __name__ == "__main__":

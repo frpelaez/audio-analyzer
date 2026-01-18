@@ -2,18 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"os"
 	"strings"
-
-	"github.com/go-audio/wav"
 )
-
-type AudioData struct {
-	sampleRate int
-	channels   [][]float64
-}
 
 func main() {
 	if len(os.Args) < 2 {
@@ -26,6 +18,8 @@ func main() {
 		runListenCmd(os.Args[2:])
 	case "analyze":
 		runAnalyzeCmd(os.Args[2:])
+	case "spectro":
+		runSpectroCmd(os.Args[2:])
 	case "-h", "--help", "help":
 		printHelp()
 	default:
@@ -41,46 +35,6 @@ func printHelp() {
 	fmt.Println("  listen    Visualize the frequencies contained in the audio file")
 	fmt.Println("  analyze   Analyze the audio file and export data to CSV/Bin (wip)")
 	fmt.Println("\nType audateci <command> -h for specific help")
-}
-
-func readWavToFloats(path string) (*AudioData, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	decoder := wav.NewDecoder(f)
-	if !decoder.IsValidFile() {
-		return nil, fmt.Errorf("invalid wav file")
-	}
-
-	buf, err := decoder.FullPCMBuffer()
-	if err != nil {
-		return nil, err
-	}
-
-	numChannels := buf.Format.NumChannels
-	numSamples := len(buf.Data) / numChannels
-
-	channels := make([][]float64, numChannels)
-	for i := range channels {
-		channels[i] = make([]float64, numSamples)
-	}
-
-	bitDepth := buf.SourceBitDepth
-	factor := math.Pow(2, float64(bitDepth)-1)
-
-	for i, sample := range buf.Data {
-		channelIdx := i % numChannels
-		sampleIdx := i / numChannels
-		channels[channelIdx][sampleIdx] = float64(sample) / factor
-	}
-
-	return &AudioData{
-		sampleRate: buf.Format.SampleRate,
-		channels:   channels,
-	}, nil
 }
 
 func drawLogSpectrum(magnitudes []float64, sampleRate int, numBars int) {
