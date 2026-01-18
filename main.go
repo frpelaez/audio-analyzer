@@ -131,6 +131,6 @@ func drawLogSpectrum(magnitudes []float64, sampleRate int, numBars int) {
 		}
 
 		freqLabel := fmt.Sprintf("%0.fHz", highF)
-		fmt.Printf("%8s | %s (%.1f dB)\n", freqLabel, barBuilder.String(), dbVal)
+		fmt.Printf("\n%8s | %s (%.1f dB)", freqLabel, barBuilder.String(), dbVal)
 	}
 }
