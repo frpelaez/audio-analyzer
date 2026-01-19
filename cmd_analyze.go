@@ -1,7 +1,7 @@
 package main
 
 import (
-	sigproc "audioanalyzer/sig-proc"
+	sigproc "audateci/sig-proc"
 	// "encoding/csv"
 	"flag"
 	"fmt"
@@ -41,6 +41,10 @@ func runAnalyzeCmd(args []string) {
 	fmt.Printf("Samples per channel: %d\n", len(samples))
 	fmt.Printf("Window size for FFT: %d\n", *winsize)
 	fmt.Printf("Outputing results to: %s.%s\n", *output, *format)
+
+	if *format != "csv" {
+		fmt.Println("Warning. Only available format is 'csv'. Output will be generated as a csv")
+	}
 
 	outFile, err := os.Create(fmt.Sprintf("%s.%s", *output, *format))
 	if err != nil {

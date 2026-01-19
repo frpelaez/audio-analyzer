@@ -1,4 +1,4 @@
-module audioanalyzer
+module audateci
 
 go 1.24.4
 

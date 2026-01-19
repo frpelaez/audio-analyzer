@@ -1,7 +1,7 @@
 package main
 
 import (
-	sigproc "audioanalyzer/sig-proc"
+	sigproc "audateci/sig-proc"
 	"bufio"
 	"flag"
 	"fmt"
@@ -52,7 +52,6 @@ func runListenCmd(args []string) {
 	}
 
 	windowSize := *winSize
-	// hopSize := windowSize / 2
 	sampleRate := data.SampleRate
 	samples := data.Channels[0]
 
@@ -61,9 +60,6 @@ func runListenCmd(args []string) {
 	fmt.Printf("Channels: %d\n", len(data.Channels))
 	fmt.Printf("Samples per channel: %d\n", len(samples))
 	fmt.Printf("Window size for FFT: %d\n", windowSize)
-
-	// slowFactor := 1.0
-	// frameDuration := time.Duration((float64(hopSize) / float64(sampleRate)) * float64(time.Second) * slowFactor)
 
 	keyboardChan := make(chan bool)
 	go func() {

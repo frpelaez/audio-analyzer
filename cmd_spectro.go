@@ -1,7 +1,7 @@
 package main
 
 import (
-	sigproc "audioanalyzer/sig-proc"
+	sigproc "audateci/sig-proc"
 	"flag"
 	"fmt"
 	"log"
