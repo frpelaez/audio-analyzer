@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	signal "audateci/signal"
 	draw "audateci/draw"
+	signal "audateci/signal"
 	"bufio"
 	"flag"
 	"fmt"

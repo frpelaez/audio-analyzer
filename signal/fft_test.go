@@ -1,4 +1,4 @@
-package sigproc
+package signal
 
 import (
 	"math/rand"
