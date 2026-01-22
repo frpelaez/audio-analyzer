@@ -1,8 +1,7 @@
-package main
+package cmd
 
 import (
-	sigproc "audateci/sig-proc"
-	// "encoding/csv"
+	signal "audateci/signal"
 	"flag"
 	"fmt"
 	"log"
@@ -10,7 +9,7 @@ import (
 	"time"
 )
 
-func runAnalyzeCmd(args []string) {
+func RunAnalyzeCmd(args []string) {
 	cmd := flag.NewFlagSet("analyze", flag.ExitOnError)
 
 	output := cmd.String("o", "output.csv", "Output file")
@@ -28,7 +27,7 @@ func runAnalyzeCmd(args []string) {
 	}
 	inputFile := cmd.Arg(0)
 
-	data, err := sigproc.ReadWavToFloats(inputFile)
+	data, err := signal.ReadWavToFloats(inputFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,6 +52,6 @@ func runAnalyzeCmd(args []string) {
 	defer outFile.Close()
 
 	start := time.Now()
-	sigproc.GenerateCSV(inputFile, outFile, *winsize)
+	signal.GenerateCSV(inputFile, outFile, *winsize)
 	fmt.Printf("Finished in %.3fs\n", time.Since(start).Seconds())
 }

@@ -1,7 +1,7 @@
-package main
+package cmd
 
 import (
-	sigproc "audateci/sig-proc"
+	signal "audateci/signal"
 	"flag"
 	"fmt"
 	"log"
@@ -9,7 +9,7 @@ import (
 	"os/exec"
 )
 
-func runSpectroCmd(args []string) {
+func RunSpectroCmd(args []string) {
 	cmd := flag.NewFlagSet("spectro", flag.ExitOnError)
 
 	outputImg := cmd.String("o", "spectrogram.png", "Name of the output image")
@@ -36,7 +36,7 @@ func runSpectroCmd(args []string) {
 	fmt.Printf("Processing audio from: %s\n", audioPath)
 	fmt.Printf("Generating intermediate files in: %s\n", tempCSV.Name())
 
-	sigproc.GenerateCSV(audioPath, tempCSV, *windowSize)
+	signal.GenerateCSV(audioPath, tempCSV, *windowSize)
 
 	tempCSV.Close()
 

@@ -1,7 +1,8 @@
-package main
+package cmd
 
 import (
-	sigproc "audateci/sig-proc"
+	signal "audateci/signal"
+	draw "audateci/draw"
 	"bufio"
 	"flag"
 	"fmt"
@@ -14,7 +15,7 @@ import (
 	"github.com/gopxl/beep/v2/wav"
 )
 
-func runListenCmd(args []string) {
+func RunListenCmd(args []string) {
 	cmd := flag.NewFlagSet("listen", flag.ExitOnError)
 
 	bars := cmd.Int("bars", 20, "Number of frquency bars to show")
@@ -46,7 +47,7 @@ func runListenCmd(args []string) {
 
 	ctrl := &beep.Ctrl{Streamer: streamer, Paused: false}
 
-	data, err := sigproc.ReadWavToFloats(inputFile)
+	data, err := signal.ReadWavToFloats(inputFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -110,19 +111,19 @@ func runListenCmd(args []string) {
 			elapsed := time.Since(startTime)
 			sampleIdx := int(elapsed.Seconds() * float64(sampleRate))
 			if sampleIdx >= len(samples)-windowSize {
-				fmt.Println("\nAudio reproduction ended normally")
+				fmt.Println("\nAudio reproduction finished normally")
 				return
 			}
 
 			chunk := samples[sampleIdx : sampleIdx+windowSize]
-			windowedChunk := sigproc.ApplyHanningWindow(chunk)
-			complexInput := sigproc.PadDataToPowerOfTwo(windowedChunk)
-			fftResult := sigproc.FFT(complexInput)
-			magnitudes := sigproc.ComputeMagnitudes(fftResult)
+			windowedChunk := signal.ApplyHanningWindow(chunk)
+			complexInput := signal.PadDataToPowerOfTwo(windowedChunk)
+			fftResult := signal.FFT(complexInput)
+			magnitudes := signal.ComputeMagnitudes(fftResult)
 
 			fmt.Print("\033c\033[3J")
 
-			drawLogSpectrum(magnitudes, sampleRate, *bars)
+			draw.DrawLogSpectrum(magnitudes, sampleRate, *bars)
 
 			percent := float64(sampleIdx) / float64(len(samples)) * 100
 			fmt.Printf("\n\n %.1f%% - %.1f/%.1fs\n", percent, elapsed.Seconds(), float64(len(samples))/float64(sampleRate))
