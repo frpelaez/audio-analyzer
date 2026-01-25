@@ -19,7 +19,7 @@ func RunListenCmd(args []string) {
 	cmd := flag.NewFlagSet("listen", flag.ExitOnError)
 
 	bars := cmd.Int("bars", 20, "Number of frquency bars to show")
-	winSize := cmd.Int("winsize", 4096, "Window size used for FFT, must be a power of two")
+	winSize := cmd.Int("winsize", 4096, "Window size used for fft, must be a power of two")
 
 	cmd.Parse(args)
 

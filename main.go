@@ -19,6 +19,8 @@ func main() {
 		cmd.RunAnalyzeCmd(os.Args[2:])
 	case "spectro":
 		cmd.RunSpectroCmd(os.Args[2:])
+	case "fingerprint":
+		cmd.RunFingerprintCmd(os.Args[2:])
 	case "-h", "--help", "help":
 		printHelp()
 	default:

@@ -1,4 +1,6 @@
 build/
 auto/
-# output/
-# figures/
+fingerprints/
+csvs/
+spectros/
+audios/
