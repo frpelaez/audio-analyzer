@@ -1,6 +1,8 @@
 package signal
 
-import "math"
+import (
+	"math"
+)
 
 type FreqRange struct {
 	Min float64
@@ -35,9 +37,9 @@ func GetFingerprintPoints(magnitudes []float64, sampleRate int, windowSize int, 
 		endBin = min(endBin, len(magnitudes)-1)
 
 		for k := startBin; k <= endBin; k++ {
-			mag := magnitudes[k]
-			if mag > maxMag {
-				maxMag = mag
+			magDB :=20.0 * math.Log10(magnitudes[k])
+			if magDB > maxMag {
+				maxMag = magDB
 				maxIdx = k
 			}
 		}
