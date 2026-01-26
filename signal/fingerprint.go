@@ -25,7 +25,7 @@ var Bands = []FreqRange{
 func GetFingerprintPoints(magnitudes []float64, sampleRate int, windowSize int, currentTime float64) []KeyPoint {
 	var points []KeyPoint
 
-	silence := -50.0
+	silence := -70.0
 
 	for _, band := range Bands {
 		maxMag := -999.0
@@ -37,7 +37,7 @@ func GetFingerprintPoints(magnitudes []float64, sampleRate int, windowSize int, 
 		endBin = min(endBin, len(magnitudes)-1)
 
 		for k := startBin; k <= endBin; k++ {
-			magDB :=20.0 * math.Log10(magnitudes[k])
+			magDB := 20.0 * math.Log10(magnitudes[k])
 			if magDB > maxMag {
 				maxMag = magDB
 				maxIdx = k
