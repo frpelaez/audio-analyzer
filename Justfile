@@ -16,6 +16,11 @@ run +args='': build
     @echo "Running..."
     .\{{OUT_PATH}} {{args}}
 
+install: build
+    @echo "Installing..."
+    @go install .
+    @echo "Done"
+
 clean:
     @go clean
     @rm -Force {{OUT_PATH}}

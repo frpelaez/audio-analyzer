@@ -89,10 +89,17 @@ func RunIdentifyCmd(args []string) {
 	bestScore := 0
 	for song, offsetMap := range scores {
 		for bin, count := range offsetMap {
-			if count > bestScore {
+			neighborsScore := count
+			if val, ok := offsetMap[bin-1]; ok {
+				neighborsScore += val
+			}
+			if val, ok := offsetMap[bin+1]; ok {
+				neighborsScore += val
+			}
+			if neighborsScore > bestScore {
 				bestSong = song
 				bestOffset = float64(bin) / 10.0
-				bestScore = count
+				bestScore = neighborsScore
 			}
 		}
 	}

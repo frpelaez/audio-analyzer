@@ -14,6 +14,11 @@ def plot_histogram(json_file):
 
     offsets = [d["offset"] for d in data]
     counts = [d["count"] for d in data]
+    smooth_counts = [0 for _ in range(len(counts))]
+    smooth_counts[0] = counts[0]
+    for i in range(1, len(smooth_counts) - 1):
+        smooth_counts[i] = sum(counts[i-1:i+2])
+    smooth_counts[-1] = counts[-1]
 
     if not offsets:
         print("Did not find any significative matches")
@@ -21,7 +26,7 @@ def plot_histogram(json_file):
 
     plt.figure(figsize=(10, 6))
 
-    plt.bar(offsets, counts, width=0.1, color="teal", alpha=0.7)
+    plt.bar(offsets, smooth_counts, width=0.1, color="teal", alpha=0.7)
 
     max_count = max(counts)
     max_idx = counts.index(max_count)
@@ -34,10 +39,10 @@ def plot_histogram(json_file):
 
     plt.annotate(
         "Match",
-        xy=(best_offset, max_count / 2),
-        xytext=(best_offset, max_count / 2 + 0.15 * max_count),
-        arrowprops=dict(facecolor="black", shrink=0.05),
-        horizontalalignment="left",
+        xy=(best_offset, max_count),
+        xytext=(best_offset, max_count + 0.15 * max_count),
+        arrowprops=dict(facecolor="red", shrink=0.05),
+        horizontalalignment="center",
     )
 
     plt.tight_layout()
