@@ -1,7 +1,7 @@
 package main
 
 import (
-	cmd "audateci/cmd"
+	cmds "audateci/internal/cmds"
 	"fmt"
 	"os"
 )
@@ -17,17 +17,17 @@ func main() {
 
 	switch command {
 	case "listen":
-		cmd.RunListenCmd(args)
+		cmds.RunListenCmd(args)
 	case "analyze":
-		cmd.RunAnalyzeCmd(args)
+		cmds.RunAnalyzeCmd(args)
 	case "spectro":
-		cmd.RunSpectroCmd(args)
+		cmds.RunSpectroCmd(args)
 	case "fingerprint":
-		cmd.RunFingerprintCmd(args)
+		cmds.RunFingerprintCmd(args)
 	case "match":
-		cmd.RunMatchCmd(args)
+		cmds.RunMatchCmd(args)
 	case "identify":
-		cmd.RunIdentifyCmd(args)
+		cmds.RunIdentifyCmd(args)
 	case "-h", "--help", "help":
 		printHelp()
 	default:

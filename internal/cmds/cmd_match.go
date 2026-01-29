@@ -74,7 +74,7 @@ func RunMatchCmd(args []string) {
 
 	fmt.Println("\nAnalysis results:")
 	fmt.Printf("   Maximum score: %d matches\n", bestScore)
-	fmt.Printf("   Estimated offset: %.2f seconds\n", predictedOffset)
+	fmt.Printf("   Estimated offset: %.1f seconds\n", predictedOffset)
 
 	conf := float64(bestScore)
 	if conf > float64(*threshold) {

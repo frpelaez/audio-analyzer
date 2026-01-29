@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"audateci/signal"
+	"audateci/internal/signal"
 	"encoding/json"
 	"flag"
 	"fmt"
