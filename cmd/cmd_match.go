@@ -72,10 +72,11 @@ func RunMatchCmd(args []string) {
 
 	conf := float64(bestScore)
 	if conf > DecisionThreshold {
-		fmt.Println("Match detected!")
-		fmt.Printf("The sample appears to be a fragment of the reference audio, starting at second %.2f", predictedOffset)
+		fmt.Println("Results:")
+		fmt.Println("   Match detected!")
+		fmt.Printf("   The sample appears to be a fragment of the reference audio, starting at second %.2f", predictedOffset)
 	} else {
-		fmt.Println("Sample did not match with the reference")
+		fmt.Println("   Sample did not match with the reference")
 	}
 
 	if *debug {

@@ -24,7 +24,7 @@ type FingerprintFile struct {
 func RunIdentifyCmd(args []string) {
 	cmd := flag.NewFlagSet("identify", flag.ExitOnError)
 	winsize := cmd.Int("winsize", 2048, "Size of the FFT window (must match the one sued to create the fingerprints)")
-	treshold := cmd.Int("th", 2000, "Threshold for the number of matches")
+	threshold := cmd.Int("th", 100, "Threshold for the number of matches")
 
 	cmd.Parse(args)
 
@@ -61,9 +61,9 @@ func RunIdentifyCmd(args []string) {
 			dbIndex[freq] = append(dbIndex[freq], entry)
 		}
 	}
-	fmt.Printf("%d songs indexed from local database '%s\n'", len(files), dbFolder)
+	fmt.Printf("%d songs indexed from local database '%s'\n", len(files), dbFolder)
 
-	fmt.Printf("Analyzing fragment '%s'...\n", fragmentPath)
+	fmt.Printf("Analyzing fragment '%s'\n", fragmentPath)
 
 	fragmentKeypoints := signal.GetKeypointsFromFile(fragmentPath, *winsize)
 
@@ -98,11 +98,11 @@ func RunIdentifyCmd(args []string) {
 	}
 
 	fmt.Println("Results:")
-	if bestScore > *treshold {
+	if bestScore > *threshold {
 		fmt.Printf("   Song: %s\n", bestSong)
 		fmt.Printf("   Offset: %.1fs\n", bestOffset)
 		fmt.Printf("   Score: %d matches\n", bestScore)
 	} else {
-		fmt.Printf("No clear matches with decision treshold %d\n", *treshold)
+		fmt.Printf("   No clear matches with decision threshold %d\n", *threshold)
 	}
 }

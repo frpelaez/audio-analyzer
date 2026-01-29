@@ -73,5 +73,5 @@ func RunFingerprintCmd(args []string) {
 		log.Fatal("Error saving JSON:", err)
 	}
 
-	fmt.Printf("Audio fingerprint saved successfully to '%s'. Found %d key points", *output, len(resultPoints))
+	fmt.Printf("Audio fingerprint saved successfully to '%s'. Found %d key points\n", *output, len(resultPoints))
 }
