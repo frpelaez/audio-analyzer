@@ -9,7 +9,7 @@ default:
 
 build:
     @echo "Compiling..."
-    go build -o {{OUT_PATH}}
+    @go build -o {{OUT_PATH}}
     @echo "Done"
 
 run +args='': build
@@ -17,5 +17,5 @@ run +args='': build
     .\{{OUT_PATH}} {{args}}
 
 clean:
-    go clean
-    rm -Force {{OUT_PATH}}
+    @go clean
+    @rm -Force {{OUT_PATH}}

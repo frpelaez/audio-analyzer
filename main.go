@@ -12,19 +12,26 @@ func main() {
 		os.Exit(1)
 	}
 
-	switch os.Args[1] {
+	command := os.Args[1]
+	args := os.Args[2:]
+
+	switch command {
 	case "listen":
-		cmd.RunListenCmd(os.Args[2:])
+		cmd.RunListenCmd(args)
 	case "analyze":
-		cmd.RunAnalyzeCmd(os.Args[2:])
+		cmd.RunAnalyzeCmd(args)
 	case "spectro":
-		cmd.RunSpectroCmd(os.Args[2:])
+		cmd.RunSpectroCmd(args)
 	case "fingerprint":
-		cmd.RunFingerprintCmd(os.Args[2:])
+		cmd.RunFingerprintCmd(args)
+	case "match":
+		cmd.RunMatchCmd(args)
+	case "identify":
+		cmd.RunIdentifyCmd(args)
 	case "-h", "--help", "help":
 		printHelp()
 	default:
-		fmt.Printf("Unkown command: '%s'\n", os.Args[1])
+		fmt.Printf("Unkown command: '%s'\n", command)
 		printHelp()
 		os.Exit(1)
 	}

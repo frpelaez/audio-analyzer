@@ -1,6 +1,7 @@
 package signal
 
 import (
+	"log"
 	"math"
 )
 
@@ -55,4 +56,30 @@ func GetFingerprintPoints(magnitudes []float64, sampleRate int, windowSize int, 
 	}
 
 	return points
+}
+
+func GetKeypointsFromFile(path string, windowSize int) []KeyPoint {
+	data, err := ReadWavToFloats(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	samples := data.Channels[0]
+
+	var fragmentPoints []KeyPoint
+	hopSize := windowSize / 2
+	for i := 0; i < len(samples)-windowSize; i += hopSize {
+		chunk := samples[i : i+windowSize]
+		windowed := ApplyHanningWindow(chunk)
+		padded := PadDataToPowerOfTwo(windowed)
+		fftRes := FFT(padded)
+		mags := ComputeMagnitudes(fftRes)
+
+		currentTime := float64(i) / float64(data.SampleRate)
+
+		peaks := GetFingerprintPoints(mags, data.SampleRate, windowSize, currentTime)
+		fragmentPoints = append(fragmentPoints, peaks...)
+	}
+
+	return fragmentPoints
 }
