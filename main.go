@@ -4,12 +4,14 @@ import (
 	cmds "audateci/internal/cmds"
 	"fmt"
 	"os"
+
+	"github.com/fatih/color"
 )
 
 func main() {
 	if len(os.Args) < 2 {
 		printHelp()
-		os.Exit(1)
+		return
 	}
 
 	command := os.Args[1]
@@ -38,13 +40,26 @@ func main() {
 }
 
 func printHelp() {
-	fmt.Println("Usage: audateci <command> [options] <audio_file.wav>")
-	fmt.Println("\nAvailable commands:")
-	fmt.Println("  analyze       Analyze the audio file and export data to csv")
-	fmt.Println("  fingerprint   Calculate the audio fingerprint of wav file and export it to json format")
-	fmt.Println("  listen        Visualize the frequencies contained in the audio file")
-	fmt.Println("  spectro       Compute spectrogram from audio file and export to png")
-	fmt.Println("  match         Decide if two fingerprints have a match and what is the offset between them")
-	fmt.Println("  identify      Run a match between a given audio file and a directory containing audio fingerprints")
-	fmt.Println("\nType audateci <command> -h for specific help")
+	usageStyle := color.New(color.FgMagenta, color.Bold)
+	audateci := color.BlueString(" audateci ")
+	command := color.CyanString("<command> ")
+	options := color.GreenString("[options] ")
+	file := color.CyanString("<audio-file.wav>")
+	usageStyle.Print("Usage:")
+	println(audateci + command + options + file)
+
+	color.White("\n    Simple tool for analazying audio files via their time-frequency decomposition      ")
+
+	avCmdStyle := color.New(color.FgMagenta, color.Bold)
+	avCmdStyle.Println("\nAvailable commands:")
+
+	cmdsStyle := color.New(color.FgCyan)
+	println(cmdsStyle.Sprint("    analyze") + "        Analyze the audio file and export data to csv")
+	println(cmdsStyle.Sprint("    fingerprint") + "    Calculate the audio fingerprint of wav file and export it to json format")
+	println(cmdsStyle.Sprint("    identify") + "       Run a match between a given audio file and a directory containing audio fingerprints")
+	println(cmdsStyle.Sprint("    listen") + "         Visualize the frequencies contained in the audio file")
+	println(cmdsStyle.Sprint("    match") + "          Decide if two fingerprints have a match and what is the offset between them")
+	println(cmdsStyle.Sprint("    spectro") + "        Compute spectrogram from audio file and export to png")
+
+	println("\nType " + color.BlueString("audateci ") + color.CyanString("<command> ") + color.GreenString("-h") + " for specific help\n")
 }

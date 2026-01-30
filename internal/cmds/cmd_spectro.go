@@ -13,7 +13,7 @@ func RunSpectroCmd(args []string) {
 	cmd := flag.NewFlagSet("spectro", flag.ExitOnError)
 
 	outputImg := cmd.String("o", "spectrogram.png", "Name of the output image")
-	pyScript := cmd.String("script", "./spectrogram/spectro.py", "Path to the python script for visualization")
+	pyScript := cmd.String("script", "./internal/spectrogram/spectro.py", "Path to the python script for visualization")
 	windowSize := cmd.Int("winsize", 4096, "Size of the window used for FFT (must be a power of two)")
 
 	cmd.Parse(args)
