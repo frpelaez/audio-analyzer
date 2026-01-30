@@ -48,7 +48,7 @@ func printHelp() {
 	usageStyle.Print("Usage:")
 	println(audateci + command + options + file)
 
-	color.White("\n    Simple tool for analazying audio files via their time-frequency decomposition      ")
+	color.White("\n    Simple tool for analyzing audio files via their time-frequency decomposition      ")
 
 	avCmdStyle := color.New(color.FgMagenta, color.Bold)
 	avCmdStyle.Println("\nAvailable commands:")
