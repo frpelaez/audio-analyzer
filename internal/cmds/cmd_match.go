@@ -14,7 +14,7 @@ const DecisionThreshold = 2000
 
 func RunMatchCmd(args []string) {
 	cmd := flag.NewFlagSet("match", flag.ExitOnError)
-	threshold := flag.Int("th", 100, "Threshold used for match decision ")
+	threshold := cmd.Int("th", 100, "Threshold used for match decision ")
 	debug := cmd.Bool("d", false, "debug only")
 
 	cmd.Parse(args)
@@ -32,7 +32,7 @@ func RunMatchCmd(args []string) {
 	sampleData := loadFingerprint(samplePath)
 
 	fmt.Printf(
-		"Comparing:\n   reference A: %s, (%d keypoints)\n   sample    B: %s, (%d keypoints)",
+		"Comparing:\n   Reference: %s, (%d keypoints)\n   Sample:    %s, (%d keypoints)",
 		refPath, len(refData.Points), samplePath, len(sampleData.Points))
 
 	refIndex := make(map[int][]float64)
@@ -73,14 +73,14 @@ func RunMatchCmd(args []string) {
 	predictedOffset := float64(bestOffsetBin) / 10.0
 
 	fmt.Println("\nAnalysis results:")
-	fmt.Printf("   Maximum score: %d matches\n", bestScore)
+	fmt.Printf("   Maximum score:    %d matches\n", bestScore)
 	fmt.Printf("   Estimated offset: %.1f seconds\n", predictedOffset)
 
 	conf := float64(bestScore)
 	if conf > float64(*threshold) {
 		fmt.Println("Results:")
 		fmt.Println("   Match detected!")
-		fmt.Printf("   The sample appears to be a fragment of the reference audio, starting at second %.2f", predictedOffset)
+		fmt.Printf("   The sample appears to be a fragment of the reference audio, starting at second %.1f", predictedOffset)
 	} else {
 		fmt.Println("   Sample did not match with the reference")
 	}
