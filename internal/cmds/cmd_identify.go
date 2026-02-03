@@ -67,6 +67,11 @@ func RunIdentifyCmd(args []string) {
 
 	fragmentKeypoints := signal.GetKeypointsFromFile(fragmentPath, *winsize)
 
+	fmt.Printf(
+		"Successfully generated fingerprint for input fragment (%d keypoints)\n",
+		len(fragmentKeypoints),
+	)
+
 	scores := make(map[string]map[int]int)
 	for _, pFrag := range fragmentKeypoints {
 		freq := int(pFrag.FreqHz)
@@ -106,9 +111,9 @@ func RunIdentifyCmd(args []string) {
 
 	fmt.Println("Results:")
 	if bestScore > *threshold {
-		fmt.Printf("   Song: %s\n", bestSong)
+		fmt.Printf("   Song:   %s\n", bestSong)
 		fmt.Printf("   Offset: %.1fs\n", bestOffset)
-		fmt.Printf("   Score: %d matches\n", bestScore)
+		fmt.Printf("   Score:  %d matches\n", bestScore)
 	} else {
 		fmt.Printf("   No clear matches with decision threshold %d\n", *threshold)
 	}
