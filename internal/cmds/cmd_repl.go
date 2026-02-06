@@ -37,7 +37,7 @@ func RunReplCmd() {
 			break
 		}
 
-		fmt.Println("❌ File does not exist or it cannot be accessed. Try again")
+		fmt.Println("File does not exist or it cannot be accessed. Try again")
 	}
 
 	session := &Session{
@@ -47,7 +47,7 @@ func RunReplCmd() {
 
 	go processAudioBackground(session)
 
-	fmt.Println("✅ Audio loaded. Processing in the background...")
+	fmt.Println("Audio loaded. Processing in the background...")
 	fmt.Println("You can start typing commands now")
 
 	for {
@@ -66,6 +66,8 @@ func RunReplCmd() {
 		switch command {
 		case "identify":
 			handleIdentify(session, args)
+		case "load":
+			handleLoad(session, args)
 		case "status":
 			handleStatus(session)
 		case "exit", "quit":
@@ -74,17 +76,21 @@ func RunReplCmd() {
 		case "help":
 			printReplHelp()
 		default:
-			fmt.Printf("❌ Unkown command '%s'. Type 'help' to see the available options", command)
+			fmt.Printf("Unkown command '%s'. Type 'help' to see the available options", command)
 		}
 	}
 }
 
 func processAudioBackground(s *Session) {
+	s.mu.Lock()
+	processingFile := s.TargetFile
+	s.mu.Unlock()
+
 	startTime := time.Now()
 
 	data, err := signal.ReadWavToFloats(s.TargetFile)
 	if err != nil {
-		log.Printf("\n ❌ Error reading audio file in the background: %v\n>>> ", err)
+		log.Printf("\nError reading audio file in the background: %v\n>>> ", err)
 	}
 	samples := data.Channels[0]
 
@@ -105,13 +111,44 @@ func processAudioBackground(s *Session) {
 	}
 
 	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.TargetFile != processingFile {
+		return
+	}
+
 	s.Points = foundPoints
 	s.SampleRate = data.SampleRate
 	s.IsReady = true
 	s.AnalysisTime = time.Since(startTime)
+
+	fmt.Printf("\nNew file loaded '%s'. Found %d keypoints in %v\n>>> ",
+		filepath.Base(processingFile), len(foundPoints), time.Since(startTime))
+}
+
+func handleLoad(s *Session, args []string) {
+	if len(args) < 1 {
+		fmt.Println("Usage: load <audio-file.wav>")
+		return
+	}
+
+	path := strings.Join(args, " ")
+	path = strings.TrimSpace(path)
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		fmt.Printf("File '%s' does not exist\n", path)
+		return
+	}
+
+	s.mu.Lock()
+	s.TargetFile = path
+	s.Points = nil
+	s.IsReady = false
 	s.mu.Unlock()
 
-	fmt.Printf("\n✅ Analysis completed: found %d keypoints in %v\n>>> ", len(foundPoints), time.Since(startTime))
+	fmt.Printf("Loading '%s'...\n", path)
+
+	go processAudioBackground(s)
 }
 
 func handleStatus(s *Session) {
@@ -129,7 +166,7 @@ func handleStatus(s *Session) {
 func handleIdentify(s *Session, args []string) {
 	s.mu.Lock()
 	if !s.IsReady {
-		fmt.Println("❌ Audio analysis has not finished yet. Wait a moment")
+		fmt.Println("Audio analysis has not finished yet. Wait a moment")
 		s.mu.Unlock()
 		return
 	}
@@ -138,7 +175,7 @@ func handleIdentify(s *Session, args []string) {
 	s.mu.Unlock()
 
 	if len(args) < 1 {
-		fmt.Println("❌ Usage: identify <dir-with-fingerprints>")
+		fmt.Println("Usage: identify <dir-with-fingerprints>")
 		return
 	}
 	dbFolder := args[0]
@@ -148,7 +185,7 @@ func handleIdentify(s *Session, args []string) {
 	dbIndex := make(map[int][]IndexEntry)
 	files, err := filepath.Glob(filepath.Join(dbFolder, "*.json"))
 	if err != nil || len(files) == 0 {
-		fmt.Println("❌ No fingerprints (.json) found in the directory")
+		fmt.Println("No fingerprints (.json) found in the directory")
 		return
 	}
 
@@ -202,18 +239,19 @@ func handleIdentify(s *Session, args []string) {
 
 	fmt.Println("Results:")
 	if bestScore > 100 {
-		fmt.Println("   ✅ Match found!")
-		fmt.Printf("   Song:   %s\n", bestSong)
+		fmt.Println("   Match found!")
+		fmt.Printf("   Song:   %s\n", filepath.Base(bestSong))
 		fmt.Printf("   Offset: %.1fs\n", bestOffset)
 		fmt.Printf("   Score:  %d matches\n", bestScore)
 	} else {
-		fmt.Printf("   ❌ No clear matches with decision threshold %d\n", 100)
+		fmt.Printf("   No clear matches with decision threshold %d\n", 100)
 	}
 }
 
 func printReplHelp() {
 	fmt.Println("Available commands:")
-	fmt.Println("    identify <directory>  Compare loaded audio with all the fingerprints contained in <dir>")
-	fmt.Println("    status                Check the status of the analysis running in the background")
-	fmt.Println("    exit                  Exit the program")
+	fmt.Println("    identify <directory>       Compare loaded audio with all the fingerprints contained in <dir>")
+	fmt.Println("    load     <audio-file.wav>  Load a new audio file")
+	fmt.Println("    status                     Check the status of the analysis running in the background")
+	fmt.Println("    exit                       Exit the program")
 }
