@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		printHelp()
+		cmds.RunReplCmd()
 		return
 	}
 
@@ -30,6 +30,8 @@ func main() {
 		cmds.RunMatchCmd(args)
 	case "identify":
 		cmds.RunIdentifyCmd(args)
+	case "repl":
+		cmds.RunReplCmd()
 	case "-h", "--help", "help":
 		printHelp()
 	default:
@@ -59,6 +61,7 @@ func printHelp() {
 	println(cmdsStyle.Sprint("    identify") + "       Run a match between a given audio file and a directory containing audio fingerprints")
 	println(cmdsStyle.Sprint("    listen") + "         Visualize the frequencies contained in the audio file")
 	println(cmdsStyle.Sprint("    match") + "          Decide if two fingerprints have a match and what is the offset between them")
+	println(cmdsStyle.Sprint("    repl") + "           Run the audateci repl")
 	println(cmdsStyle.Sprint("    spectro") + "        Compute spectrogram from audio file and export to png")
 
 	println("\nType " + color.BlueString("audateci ") + color.CyanString("<command> ") + color.GreenString("-h") + " for specific help\n")
