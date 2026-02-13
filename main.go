@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		cmds.RunReplCmd()
+		printHelp()
 		return
 	}
 
@@ -32,6 +32,8 @@ func main() {
 		cmds.RunIdentifyCmd(args)
 	case "repl":
 		cmds.RunReplCmd()
+	case "import":
+		cmds.RunImportCmd(args)
 	case "-h", "--help", "help":
 		printHelp()
 	default:
@@ -59,6 +61,7 @@ func printHelp() {
 	println(cmdsStyle.Sprint("    analyze") + "        Analyze the audio file and export data to csv")
 	println(cmdsStyle.Sprint("    fingerprint") + "    Calculate the audio fingerprint of wav file and export it to json format")
 	println(cmdsStyle.Sprint("    identify") + "       Run a match between a given audio file and a directory containing audio fingerprints")
+	println(cmdsStyle.Sprint("    import") + "         Create a fingerprint database from a list of songs")
 	println(cmdsStyle.Sprint("    listen") + "         Visualize the frequencies contained in the audio file")
 	println(cmdsStyle.Sprint("    match") + "          Decide if two fingerprints have a match and what is the offset between them")
 	println(cmdsStyle.Sprint("    repl") + "           Run the audateci repl")

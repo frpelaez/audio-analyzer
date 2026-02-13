@@ -14,6 +14,8 @@ import (
 	"time"
 )
 
+const confidenceThreshold = 5.0
+
 type Session struct {
 	TargetFile   string
 	Points       []signal.KeyPoint
@@ -76,7 +78,7 @@ func RunReplCmd() {
 		case "help":
 			printReplHelp()
 		default:
-			fmt.Printf("Unkown command '%s'. Type 'help' to see the available options", command)
+			fmt.Printf("Unkown command '%s'. Type 'help' to see the available options\n", command)
 		}
 	}
 }
@@ -104,7 +106,6 @@ func processAudioBackground(s *Session) {
 		padded := signal.PadDataToPowerOfTwo(windowed)
 		fftRes := signal.FFT(padded)
 		mags := signal.ComputeMagnitudes(fftRes)
-
 		time := float64(i) / float64(data.SampleRate)
 		peaks := signal.GetFingerprintPoints(mags, data.SampleRate, windowSize, time)
 		foundPoints = append(foundPoints, peaks...)
@@ -218,6 +219,7 @@ func handleIdentify(s *Session, args []string) {
 	bestSong := ""
 	bestOffset := 0.0
 	bestScore := 0
+	// secondBestScore := 0
 
 	for song, offsetMap := range scores {
 		for bin, count := range offsetMap {
@@ -230,6 +232,7 @@ func handleIdentify(s *Session, args []string) {
 			}
 
 			if neighborsScore > bestScore {
+				// secondBestScore = bestScore
 				bestSong = song
 				bestOffset = float64(bin) / 10.0
 				bestScore = neighborsScore
@@ -237,17 +240,20 @@ func handleIdentify(s *Session, args []string) {
 		}
 	}
 
+	confPercentage := float64(bestScore) / float64(len(points)) * 100.0
+
 	fmt.Println("Results:")
-	if bestScore > 100 {
-		fmt.Println("   Match found!")
-		fmt.Printf("   Song:   %s\n", filepath.Base(bestSong))
-		fmt.Printf("   Offset: %.1fs\n", bestOffset)
-		fmt.Printf("   Score:  %d matches\n", bestScore)
+	fmt.Printf("   Song:            %s\n", filepath.Base(bestSong))
+	fmt.Printf("   Offset:          %.1fs\n", bestOffset)
+	fmt.Printf("   Absolute score:  %d matches\n", bestScore)
+	fmt.Printf("   Confidence:      %.2f%%\n", confPercentage)
+
+	if confPercentage > confidenceThreshold {
+		fmt.Println("Match found!")
 	} else {
-		fmt.Printf("   No clear matches with decision threshold %d\n", 100)
+		fmt.Println("Confidence percentage below minimum threshold (5%). try again with a larger or cleaner fragment")
 	}
 }
-
 func printReplHelp() {
 	fmt.Println("Available commands:")
 	fmt.Println("    identify <directory>       Compare loaded audio with all the fingerprints contained in <dir>")
