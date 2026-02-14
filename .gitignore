@@ -13,5 +13,6 @@ reports/
 db/
 audios_test/
 fragments_test/
+fdb/
 
 songs.txt
