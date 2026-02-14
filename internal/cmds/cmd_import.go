@@ -129,3 +129,39 @@ func processAudioToFingerprint(wavPath, originalName string) FingerprintFile {
 		Points:   points,
 	}
 }
+
+func RunFingerprintDir(args []string) {
+	cmd := flag.NewFlagSet("fpdir", flag.ExitOnError)
+	outputDir := cmd.String("o", "fdb", "Output directory for the fingerprints")
+	cmd.Parse(args)
+
+	if cmd.NArg() < 1 {
+		fmt.Println("Usage: audateci fpdir -o <output-dir> <dir-with-wavs>")
+		os.Exit(1)
+	}
+
+	inputFolder := cmd.Arg(0)
+
+	files, _ := filepath.Glob(filepath.Join(inputFolder, "*.wav"))
+	totalFiles := len(files)
+	fmt.Printf("Processing %d files...\n", totalFiles)
+	for i, file := range files {
+		name := strings.SplitN(filepath.Base(file), ".", 2)[0]
+		fmt.Printf("[%d/%d] Processing '%s'...\n", i+1, totalFiles, name)
+		fpFile := processAudioToFingerprint(file, name)
+
+		if len(fpFile.Points) == 0 {
+			fmt.Printf("Warning: no audio data found in %s\n", file)
+			continue
+		}
+
+		outputFile := filepath.Join(*outputDir, sanitizeFilename(name)+".json")
+		jsonFile, _ := os.Create(outputFile)
+		json.NewEncoder(jsonFile).Encode(fpFile)
+		jsonFile.Close()
+
+		fmt.Printf("Fingerprint saved to '%s' (%d points)\n", outputFile, len(fpFile.Points))
+	}
+
+	fmt.Println("Process finished successfully")
+}
