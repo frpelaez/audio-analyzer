@@ -21,7 +21,7 @@ pip install matplotlin
 
 ## Installation
 
-The repository provides a precompiled version of `audateci`. This will work only in Windows x86_32/64 machinses, though.
+The repository provides a precompiled version of `audateci`. This will work only in Windows x86_32/64 machines, though.
 
 `audateci` can be built from source via the `go` compiler (see [The Go Programming Language](https://go.dev/))
 
