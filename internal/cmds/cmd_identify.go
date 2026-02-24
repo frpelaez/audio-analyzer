@@ -9,9 +9,11 @@ import (
 	"log"
 	"math"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -44,6 +46,7 @@ func RunIdentifyCmd(args []string) {
 	cmd := flag.NewFlagSet("identify", flag.ExitOnError)
 	cmd.IntVar(&windowSize, "winsize", 2048, "Size of the FFT window (must match the one sued to create the fingerprints)")
 	outputFile := cmd.String("csv", "reports/test_results.csv", "Name for the report file (only for batch mode)")
+	openYT := cmd.Bool("openYT", false, "Whether to directly open the YT video of the matching song")
 
 	cmd.Parse(args)
 
@@ -66,7 +69,7 @@ func RunIdentifyCmd(args []string) {
 	if info.IsDir() {
 		_runBatchMode(inputPath, dbIndex, *outputFile)
 	} else {
-		runSingleMode(inputPath, dbIndex)
+		runSingleMode(inputPath, dbIndex, *openYT)
 	}
 }
 
@@ -170,26 +173,63 @@ func identifyAudio(path string, index map[int][]IndexEntry) (MatchResult, error)
 	}, nil
 }
 
-func runSingleMode(file string, index map[int][]IndexEntry) {
+func runSingleMode(file string, index map[int][]IndexEntry, openYT bool) {
 	fmt.Printf("Analyzing: %s\n", file)
 	res, err := identifyAudio(file, index)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	songTitle := filepath.Base(res.BestMatch)
+	url, err := getVideoURL(songTitle)
+	if err != nil {
+		fmt.Printf("Unnable to get url for best matching song: '%s'", songTitle)
+		url = "NONE"
+	}
+
 	fmt.Println("\nResults:")
-	fmt.Printf("   Match:      %s\n", filepath.Base(res.BestMatch))
+	fmt.Printf("   Match:      %s (%s)\n", songTitle, url)
 	fmt.Printf("   Offset:     %.1fs\n", res.Offset)
 	fmt.Printf("   Score:      %d / %d points\n", res.Score, res.TotalPoints)
 	fmt.Printf("   Confianza:  %.2f%%\n", res.Confidence)
 
-	fmt.Println("\nBeredict:")
+	fmt.Println("Verdict:")
 
 	if res.Confidence > ConfidenceThreshold && res.Score > 5 {
 		fmt.Println("    Match found")
 	} else {
 		fmt.Println("    Unnable to find a match (Low confidence)")
 	}
+
+	if openYT {
+		err = openURL(url)
+		if err != nil {
+			fmt.Printf("Unnable to open song url: %v", err)
+		}
+	}
+}
+
+func getVideoURL(search string) (string, error) {
+	arg := fmt.Sprintf("ytsearch1:%s", search)
+	cmd := exec.Command("yt-dlp", "--print", "webpage_url", arg)
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+
+	cleanURL := strings.TrimSpace(string(output))
+
+	return cleanURL, nil
+}
+
+func openURL(url string) error {
+	cmd := exec.Command("chrome.exe", url)
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func runBatchMode(folder string, index map[int][]IndexEntry, csvPath string) {
@@ -205,10 +245,8 @@ func runBatchMode(folder string, index map[int][]IndexEntry, csvPath string) {
 	writer := csv.NewWriter(csvFile)
 	defer writer.Flush()
 
-	// Escribir cabecera
 	writer.Write([]string{"Query File", "Best Match", "Offset (s)", "Score", "Total Points", "Confidence %", "Time", "Status"})
 
-	// Procesar
 	for i, file := range files {
 		fmt.Printf("[%d/%d] Processing %s ... ", i+1, len(files), filepath.Base(file))
 

@@ -36,6 +36,8 @@ func main() {
 		cmds.RunImportCmd(args)
 	case "fpdir":
 		cmds.RunFingerprintDir(args)
+	case "demo":
+		cmds.RunDemoCmd()
 	case "-h", "--help", "help":
 		printHelp()
 	default:

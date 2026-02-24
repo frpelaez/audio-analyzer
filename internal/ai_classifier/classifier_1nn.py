@@ -3,7 +3,6 @@ import json
 import os
 
 
-
 class AudioFingerprintClassifier:
     def __init__(self):
         self.database = {}  # Estructura: {'nombre_cancion': set(frecuencias)}
@@ -65,7 +64,6 @@ class AudioFingerprintClassifier:
 
         # --- Lógica de Clasificación (1-NN) ---
         for song_name, song_features in self.database.items():
-
             # Calculamos la INTERSECCIÓN (puntos en común)
             common_points = fragment_features.intersection(song_features)
 

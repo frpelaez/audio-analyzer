@@ -1,5 +1,6 @@
 import argparse
 import sys
+import os
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -45,7 +46,8 @@ def spectrogram(csv_file: str, output_file=None):
     ax.set_yscale("log")
 
     plt.colorbar(img, label="Magnitude (dB)", ax=ax)
-    ax.set_title(f"Log-spectrogram: {csv_file}")
+    title = os.path.basename(output_file).split(".")[0] if output_file else csv_file
+    ax.set_title(f"Log-spectrogram: {title}")
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Frequency (Hz)")
 

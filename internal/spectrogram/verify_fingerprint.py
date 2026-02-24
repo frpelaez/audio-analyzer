@@ -51,13 +51,13 @@ def verify_fingerprint(wav_file, json_file):
     for b_min, b_max in BANDS:
         plt.axhline(y=b_max, color="blue", linestyle="--", linewidth=0.8, alpha=0.5)
 
-    plt.title(f"Constelation map: {wav_file}")
+    plt.title(f"Audio fingerprint: {wav_file}")
     plt.ylabel("Frequency (Hz)")
     plt.xlabel("Time (s)")
     plt.legend(loc="upper right")
 
     plt.ylim(0, 11000)
-    plt.xlim(0, fingerprint["duration"])
+    # plt.xlim(0, fingerprint["duration"])
 
     plt.tight_layout()
     plt.show()
